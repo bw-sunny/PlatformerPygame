@@ -16,7 +16,7 @@ class Player(Sprite):
         self.rect.x = x
         self.rect.y = y
         self.velocity_y = 0
-        self.speed = 5  # Индивидуальная скорость игрока
+        self.speed = 8  # Индивидуальная скорость игрока
         self.on_ground = False
 
     def update(self, platforms):
@@ -37,11 +37,11 @@ class Player(Sprite):
                     self.velocity_y = 0
 
     def move(self, dx):
-        if 0 <= self.rect.x <= 1970:
+        if 0 <= self.rect.x <= 3970:
             self.rect.x += dx * self.speed
         elif 0 > self.rect.x:
             self.rect.x += 10
-        elif self.rect.x > 1970:
+        elif self.rect.x > 3970:
             self.rect.x -=10
         #print("x:",self.rect.x,"y:", self.rect.y)
 

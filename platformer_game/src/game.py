@@ -22,8 +22,16 @@ class Game:
 
         # Камера
         self.camera_offset = pygame.math.Vector2(0, 0)
+        self.level = Level(1)
+
+        # Увеличиваем фон для большого уровня
         self.background = pygame.Surface((self.level.level_width, SCREEN_HEIGHT))
-        self.background.fill((30, 30, 50))  # Темно-синий фон
+        self.background.fill((30, 30, 50))  # Заполняем цветом
+
+        # Если используете текстуру фона:
+        self.bg_image = pygame.image.load(BACKGROUND_IMAGE).convert()
+        self.bg_image = pygame.transform.scale(self.bg_image,
+                                               (self.level.level_width, SCREEN_HEIGHT))
 
         self.original_bg = pygame.image.load(BACKGROUND_IMAGE).convert_alpha()
 
@@ -46,6 +54,7 @@ class Game:
                     self.player.jump()
                 if event.key == pygame.K_r:  # Рестарт
                     self.reset_level()
+                    print(f"нажата клавиша r")
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -86,6 +95,19 @@ class Game:
                 sprite.image,
                 (sprite.rect.x - self.camera_offset.x, sprite.rect.y)
             )
+
+        font = pygame.font.SysFont(None, 30)
+        debug_text = [
+            f"Player pos: ({self.player.rect.x}, {abs(self.player.rect.y)})",
+            f"Camera offset: {self.camera_offset.x}",
+            f"Ground blocks: {len(self.level.platforms)}",
+            f"Holes: {len(self.level.holes)}",
+            f"Speed: {self.player.speed}"
+        ]
+
+        for i, text in enumerate(debug_text):
+            text_surface = font.render(text, True, (255, 255, 255))
+            self.screen.blit(text_surface, (10, 10 + i * 30))
 
         pygame.display.flip()
 
