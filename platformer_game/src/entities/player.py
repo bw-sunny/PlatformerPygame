@@ -7,7 +7,7 @@ class Player(Sprite):
         super().__init__()
         # Загрузка спрайта (или заглушка)
         try:
-            self.image = pygame.image.load("assets/sprites/player.png").convert_alpha()
+            self.image = pygame.image.load("/Users/bezenov_v/Desktop/PlatformerPygame/platformer_game/assets/sprites/player.png").convert_alpha()
         except:
             self.image = pygame.Surface((32, 32))
             self.image.fill('ffffff')  # Белый квадрат, если спрайт не найден
@@ -37,7 +37,13 @@ class Player(Sprite):
                     self.velocity_y = 0
 
     def move(self, dx):
-        self.rect.x += dx * self.speed  # Умножаем на скорость
+        if 0 <= self.rect.x <= 1970:
+            self.rect.x += dx * self.speed
+        elif 0 > self.rect.x:
+            self.rect.x += 10
+        elif self.rect.x > 1970:
+            self.rect.x -=10
+        #print("x:",self.rect.x,"y:", self.rect.y)
 
     def jump(self):
         if self.on_ground:

@@ -1,5 +1,5 @@
 import pygame
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BLACK
+from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BLACK, BACKGROUND_IMAGE
 from entities.player import Player
 from world.level import Level
 
@@ -25,6 +25,18 @@ class Game:
         self.background = pygame.Surface((self.level.level_width, SCREEN_HEIGHT))
         self.background.fill((30, 30, 50))  # Темно-синий фон
 
+        self.original_bg = pygame.image.load(BACKGROUND_IMAGE).convert_alpha()
+
+        # Рассчитываем новые размеры
+        self.bg_width = int(self.original_bg.get_width() * 0.42)
+        self.bg_height = int(self.original_bg.get_height() * 0.56)
+
+        # Масштабируем
+        self.background = pygame.transform.scale(
+            self.original_bg,
+            (self.bg_width, self.bg_height)
+        )
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -49,7 +61,6 @@ class Game:
 
         # Физика игрока
         self.player.update(self.platforms)
-
         # Падение за экран
         if self.player.rect.top > SCREEN_HEIGHT:
             self.reset_level()
@@ -60,12 +71,16 @@ class Game:
         self.camera_offset.x = 0
 
     def render(self):
-        self.screen.fill(BLACK)
+        self.screen.fill(BLACK)  # Фон подложка
 
-        # Фон с параллаксом
-        self.screen.blit(self.background, (-self.camera_offset.x // 3, 0))
+        # Позиционируем по центру экрана
+        bg_x = (SCREEN_WIDTH - self.bg_width) // 2
+        bg_y = (SCREEN_HEIGHT - self.bg_height) // 2
 
-        # Отрисовка с учетом камеры
+        # Отрисовка фона
+        self.screen.blit(self.background, (bg_x, bg_y))
+
+        # Отрисовка игровых объектов (ваш код)
         for sprite in self.all_sprites:
             self.screen.blit(
                 sprite.image,

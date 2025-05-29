@@ -1,5 +1,6 @@
 import pygame
 from .platform import Platform
+from settings import LEVELS
 
 
 class Level:
@@ -9,17 +10,18 @@ class Level:
         self.load_level(level_num)
 
     def load_level(self, level_num):
-        from settings import LEVELS
+          # И другие зелья
+
         level_data = LEVELS.get(level_num, {})
 
-        # Основная земля
+        # Генерация земли
         for x, y, width in level_data.get("ground", []):
-            Platform(x, y, width, 50, self.platforms)
+            Platform(x, y, width, 80, self.platforms)  # 5 параметров
 
-        # Платформы в воздухе
+        # Воздушные платформы
         for x, y, width in level_data.get("platforms", []):
-            Platform(x, y, width, 20, self.platforms)
+            Platform(x, y, width, 20, self.platforms)  # 5 параметров
 
-        # Ямы (визуализация)
+        # Ямы
         for x, y, width in level_data.get("holes", []):
-            Platform(x, y, width, 50, self.platforms, is_hole=True)
+            Platform(x, y, width, 50, self.platforms, is_hole=True)  # 6 параметров
