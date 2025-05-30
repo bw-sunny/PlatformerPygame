@@ -8,38 +8,34 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        pygame.display.set_caption("Platformer")
+        pygame.display.set_caption("Best team in the world")
         self.clock = pygame.time.Clock()
         self.running = True
 
         # Инициализация уровня
-        self.level = Level(1)  # Только первый уровень
+        self.level = Level(1)
         self.platforms = self.level.platforms
+        self.holes = self.level.holes
+        self.potions = self.level.potions
 
         # Игрок
         self.player = Player(100, 300)
-        self.all_sprites = pygame.sprite.Group(self.player, self.platforms)
+
+        # Группа всех спрайтов
+        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites.add(self.player)
+        self.all_sprites.add(*self.platforms)
+        self.all_sprites.add(*self.holes)
+        self.all_sprites.add(*self.potions)
+        self.all_sprites.add(*self.level.hints)
 
         # Камера
         self.camera_offset = pygame.math.Vector2(0, 0)
-        self.level = Level(1)
 
-        # Увеличиваем фон для большого уровня
-        self.background = pygame.Surface((self.level.level_width, SCREEN_HEIGHT))
-        self.background.fill((30, 30, 50))  # Заполняем цветом
-
-        # Если используете текстуру фона:
-        self.bg_image = pygame.image.load(BACKGROUND_IMAGE).convert()
-        self.bg_image = pygame.transform.scale(self.bg_image,
-                                               (self.level.level_width, SCREEN_HEIGHT))
-
+        # Фон
         self.original_bg = pygame.image.load(BACKGROUND_IMAGE).convert_alpha()
-
-        # Рассчитываем новые размеры
         self.bg_width = int(self.original_bg.get_width() * 0.42)
         self.bg_height = int(self.original_bg.get_height() * 0.56)
-
-        # Масштабируем
         self.background = pygame.transform.scale(
             self.original_bg,
             (self.bg_width, self.bg_height)
@@ -50,46 +46,47 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_w:
                     self.player.jump()
-                if event.key == pygame.K_r:  # Рестарт
+                if event.key == pygame.K_r:
                     self.reset_level()
-                    print(f"нажата клавиша r")
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_a]:
             self.player.move(-1)
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_d]:
             self.player.move(1)
 
-    def update(self):
-        # Камера следует за игроком
-        self.camera_offset.x = self.player.rect.centerx - SCREEN_WIDTH // 2
-        self.camera_offset.x = max(0, min(self.camera_offset.x,
-                                          self.level.level_width - SCREEN_WIDTH))
-
-        # Физика игрока
-        self.player.update(self.platforms)
-        # Падение за экран
-        if self.player.rect.top > SCREEN_HEIGHT:
-            self.reset_level()
-
     def reset_level(self):
+        """Полный сброс уровня"""
+        # Сбрасываем игрока
         self.player.rect.x = 100
         self.player.rect.y = 300
         self.camera_offset.x = 0
+        self.player.speed = self.player.base_speed
+        self.player.has_speed_boost = False
+
+        # Восстанавливаем зелья
+        self.level.reset_potions()
+        print("Уровень сброшен, зелья восстановлены")
+
+    def update(self):
+        self.camera_offset.x = self.player.rect.centerx - SCREEN_WIDTH // 2
+        self.camera_offset.x = max(0, min(self.camera_offset.x,
+                                          self.level.level_width - SCREEN_WIDTH))
+        self.player.update(self.platforms, self.holes, self.potions)
+
+        if self.player.rect.top > SCREEN_HEIGHT:
+            self.reset_level()
+        self.level.hints.update()
+
 
     def render(self):
-        self.screen.fill(BLACK)  # Фон подложка
-
-        # Позиционируем по центру экрана
+        self.screen.fill(BLACK)
         bg_x = (SCREEN_WIDTH - self.bg_width) // 2
         bg_y = (SCREEN_HEIGHT - self.bg_height) // 2
-
-        # Отрисовка фона
         self.screen.blit(self.background, (bg_x, bg_y))
 
-        # Отрисовка игровых объектов (ваш код)
         for sprite in self.all_sprites:
             self.screen.blit(
                 sprite.image,
@@ -100,10 +97,9 @@ class Game:
         debug_text = [
             f"Player pos: ({self.player.rect.x}, {abs(self.player.rect.y)})",
             f"Camera offset: {self.camera_offset.x}",
-            f"Ground blocks: {len(self.level.platforms)}",
-            f"Holes: {len(self.level.holes)}",
             f"Speed: {self.player.speed}"
         ]
+        debug_text.append(f"Зельев: {len(self.level.potions)}")
 
         for i, text in enumerate(debug_text):
             text_surface = font.render(text, True, (255, 255, 255))

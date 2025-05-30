@@ -9,38 +9,37 @@ GRAVITY = 0.55
 LEVELS = {
     1: {
         "ground": [
-            (0, 550, 700),      # Первый участок земли (y=550)
-            (1000, 550, 800),     # Второй участок
-            (2600, 550, 1000),    # Третий участок
-            (3500, 550, 600)      # Четвертый участок
+            (0, 550, 700),
+            (1000, 550, 800),
+            (2600, 550, 1000),
+            (3500, 550, 600)
         ],
         "platforms": [
-            # Платформы над землей (y < 550)
-            (200, 450, 100),     # Над первым участком
+            (200, 450, 100),
             (400, 350, 100),
             (600, 250, 200),
-            (1400, 425, 150),    # Между первым и вторым участком
-            (1850, 350, 150),
-            (2200, 450, 100),
-            (2500, 350, 150),    # Над третьим участком
-            (3000, 400, 200),
-            (3850, 280, 150)
-        ],
-        "speed_potions": [
-            (550, 430),  # Над первой платформой (y=450-20)
+            (1400, 425, 150),
+            (1700, 350, 150),
+            (2100, 450, 150),
+            (2450, 350, 150),
+            (2900, 400, 100),
+            (3400, 320, 100),
+            (3850, 300, 150)
         ],
         "holes": [
-            (700, 550, 300),  # Яма между первым и вторым участком
-            (1800, 550, 800)   # Яма между вторым и третьим участком
+            (700, 550, 300),
+            (1800, 550, 800)
+        ],
+        "speed_potions": [
+            (1700, 500)
         ]
     }
 }
-#Background #1
+
+# Пути к изображениям
 BACKGROUND_IMAGE = "/Users/bezenov_v/Desktop/PlatformerPygame/platformer_game/assets/backgrounds/background1.png"
-GROUND_TEXTURE = "/Users/bezenov_v/Desktop/PlatformerPygame/platformer_game/assets/backgrounds/ground.png"  # Текстура земли
-PLATFORM_TEXTURE = "/Users/bezenov_v/Desktop/PlatformerPygame/platformer_game/assets/backgrounds/platfrom.png"  # Текстура платформ
-
-
+GROUND_TEXTURE = "/Users/bezenov_v/Desktop/PlatformerPygame/platformer_game/assets/backgrounds/ground.png"
+PLATFORM_TEXTURE = "/Users/bezenov_v/Desktop/PlatformerPygame/platformer_game/assets/backgrounds/platfrom.png"
 
 # Цвета
 BLACK = (0, 0, 0)
